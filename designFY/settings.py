@@ -25,7 +25,7 @@ SECRET_KEY = 'qh^!zks4m7nj=myvbo0hvogmi(&-3^y&@=21!l_fj7rd8=2mm('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apps.login',
+    'apps.index',
+    'apps.album',
+    'apps.note',
+    'apps.timeline',
+    'apps.lovewords'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +60,9 @@ ROOT_URLCONF = 'designFY.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,8 +83,12 @@ WSGI_APPLICATION = 'designFY.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'designFY',
+        'USER':'root',
+        'PASSWORD':'25041',
+        'HOST':'localhost',
+        'PORT':'3306',
     }
 }
 
@@ -118,3 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media').replace("\\","/")
+
+STATICFILES_DIRS = (
+     os.path.join(BASE_DIR, 'static').replace('\\', '/'),
+)
+
