@@ -1,0 +1,29 @@
+.main {
+	background: url(../image/index-bg.jpg) no-repeat;
+	width: 100%;
+  	height: 740px;
+  	background-size: 100%;
+}
+.main-title {
+	background: #DCDDDF url(../image/index-title.jpg);
+	width: 100%;
+	height: auto;
+}
+.main-row {
+	width: 100%;
+	height: auto;
+	margin: auto auto;
+}
+.main-item {
+	width: 32%;
+	height: auto;
+	padding-top: 8px;
+	padding-bottom: 7px;
+	padding-left: 15px;
+	padding-right: 15px;
+	display: inline-block;
+	margin: auto auto;
+}
+.main-wap {
+	margin: auto auto;
+}
