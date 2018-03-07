@@ -1,3 +1,4 @@
+{% load static from staticfiles %}
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -7,8 +8,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
 	<title>登录</title>
-	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
-	<link rel="stylesheet" href="../static/css/login.css">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
 	<div class="container-fluid form-login">
@@ -21,7 +22,7 @@
 		</div>
 		<div class="row">
 		    <div class="col-sm-offset-3 col-sm-6">
-		        <form class="form-horizontal" method="POST" action="/login/">
+		        <form class="form-horizontal" method="POST" action="{% url 'login' %}">
 		        	{% csrf_token %}
 		            <span class="heading">用户登录</span>
 		            <div class="form-group">
