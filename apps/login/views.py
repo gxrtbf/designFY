@@ -24,7 +24,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None and user.is_active:
                 login(request,user)
-                return HttpResponseRedirect("/index/")
+                return HttpResponseRedirect("/designfy/index/")
             else:
             	return render(request,'login.html',{'sign': '账号或密码输入错误！'})	
         else:
