@@ -13,48 +13,81 @@ from apps.album.models import Album, AlbumFile
 def album_view(request):
 	return render(request, 'album.html')
 
+def albumitem_view(request,key):
+	return render(request, 'albumitem.html')
+
 def albumupload_view(request):
 	return render(request, 'albumupload.html')
 
 @api_view(['POST'])
-def searchOwnerTitle(request):
+def searchOwnerTitle_view(request):
 	if request.method == 'POST':
-		owner = request.POST.get('owner', None)
-		if owner:
-			albumfile = AlbumFile.objects.filter(owner=owner)
+		cover = request.POST.get('cover', None)
+		if not cover:
+			albumfile = AlbumFile.objects.filter(owner=request.user)
 			if albumfile:
 				serializer = AlbumFileInfoSerializer(albumfile, many=True)
 				return Response(serializer.data)
 			else:
 				return JsonResponse({'info': 'None'}, status=200)
 		else:
-			return JsonResponse({'error': 'input error'}, status=status.HTTP_400_BAD_REQUEST)
+			albumfile = AlbumFile.objects.filter(owner=request.user)
+			if albumfile:
+				serializer = AlbumFileSerializer(albumfile, many=True)
+				return Response(serializer.data)
+			else:
+				return JsonResponse({'info': 'None'}, status=200)
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
-		
+	
 @api_view(['POST'])
-def createOwnerTitle(request):
+def createOwnerTitle_view(request):
 	if request.method == 'POST':
-		print(request.POST)
-		print(request.FILES)
-		owner = request.POST.get('owner', None)
 		title = request.POST.get('title', None)
 		cover = request.FILES.get('cover', None)
-		if owner and title and cover:
-			user = User.objects.filter(id=owner)
-			if user:
-				albumfile = AlbumFile(owner=user[0], title=title, cover=cover)
-				albumfile.save()
-				return JsonResponse({'info': 'create success'}, status=200)
-			else:
-				return JsonResponse({'error': 'owner error'}, status=status.HTTP_400_BAD_REQUEST)
+		if title and cover:
+			albumfile = AlbumFile(owner=request.user, title=title, cover=cover)
+			albumfile.save()
+			return JsonResponse({'info': 'create success'}, status=200)
 		else:
 			return JsonResponse({'error': 'input error'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
-	
 
-def searchAlbumFile(request, key):
-    albums = Album.objects.filter(title=key)
-    serializer = AlbumSerializer(albums, many=True)
-    return Response(serializer.data)
+@api_view(['POST'])
+def searchAlbumList_view(request):
+	if request.method == 'POST':
+		title = request.POST.get('title', None)
+		if owner and title:
+			albumfile = AlbumFile.objects.filter(owner=request.user, title=title)
+			if albumfile:
+				albums = Album.objects.filter(title=albumfile)
+				if albums:
+					serializer = AlbumSerializer(albums, many=True)
+					return Response(serializer.data)
+				else:
+					return JsonResponse({'info': 'alnum none'}, status=200)
+			else:
+				return JsonResponse({'info': 'albumfile none'}, status=200)
+		else:
+			return JsonResponse({'error': 'input error'}, status=status.HTTP_400_BAD_REQUEST)
+	else:
+		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def createAlbumList_view(request):
+	if request.method == 'POST':
+		title = request.POST.get('title', None)
+		image = request.FILES.get('image', None)
+		if title and image:
+			albumfile = AlbumFile.objects.filter(owner=request.user, title=title)
+			if albumfile:
+				albums = Album(title=albumfile[0], image=image)
+				albums.save()
+				return JsonResponse({'info': 'create success'}, status=200)
+			else:
+				return JsonResponse({'info': 'alnumfile none'}, status=200)
+		else:
+			return JsonResponse({'error': 'input error'}, status=status.HTTP_400_BAD_REQUEST)
+	else:
+	    return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)

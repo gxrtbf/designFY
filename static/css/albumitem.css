@@ -1,0 +1,13 @@
+.line-wrapper { width: 100%; height: auto; overflow: hidden; font-size: 28px; border-bottom: 1px solid #aaa; }
+.line-scroll-wrapper { white-space: nowrap; height: 220px; clear: both; }
+
+.line-btn-delete { float: left; width: 100px; height: 100%;margin-top: 5px;}
+.line-btn-delete button { width: 100%; height: 100%; background: red; border: none; font-size: 24px; font-family: 'Microsoft Yahei'; color: #fff; }
+.line-normal-wrapper { display: inline-block; float: left;margin-top: 5px;}
+
+.cover-btn { float: left; width: 100px; height: 100%;margin-top: 5px;}
+.cover-btn-update { float: left; width: 100px; height: 50%;}
+.cover-btn-update button { width: 100%; height: 100%; background: green; border: none; font-size: 24px; font-family: 'Microsoft Yahei'; color: #fff; }
+.cover-btn-delete { float: left; width: 100px; height: 50%;}
+.cover-btn-delete button { width: 100%; height: 100%; background: red; border: none; font-size: 24px; font-family: 'Microsoft Yahei'; color: #fff; }
+.cover-normal-wrapper { display: inline-block; float: left;margin-top: 5px;}

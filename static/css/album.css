@@ -3,6 +3,10 @@
 	width: 100%;
   	min-height: 1000px;
   	background-size: 100%;
+  	line-height: 1.5em;
+    font-family: "Times New Roman", Times, serif;
+	font-size: 18px;
+	font-weight: 600;
 }
 .header-fixed {
 	left: 0;   

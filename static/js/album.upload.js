@@ -30,7 +30,7 @@ $.fn.extend({
 var initCropper = function (img, input){
     var $image = img;
     var options = {
-        aspectRatio: 1, // 纵横比
+        aspectRatio: 16/9, // 纵横比
         viewMode: 2,
         preview: '.img-preview' // 预览图的class名
     };
@@ -343,7 +343,9 @@ var uploadTools = {
      * 根据制定信息显示
      */
     "showUploadProgress":function(uploadId, i){
+        $("#"+uploadId+" .box .fileItem[fileCodeId='"+i+"'] .status>i").removeClass("glyphicon glyphicon-trash");
         $("#"+uploadId+" .box .fileItem[fileCodeId='"+i+"'] .status>i").addClass("glyphicon glyphicon-ok");
+        $("#"+uploadId+" .box .fileItem[fileCodeId='"+i+"'] .status>i").css("color","#00B38C");
         $("#"+uploadId+" .box .fileItem[fileCodeId='"+i+"'] .progressItem>div").css("width","100%");
     },
     /**
@@ -370,8 +372,8 @@ var uploadTools = {
             alert("没有文件，不支持上传");
             return;
         }
-        uploadTools.disableFileUpload(opt);//禁用文件上传
-        uploadTools.disableCleanFile(opt);//禁用清除文件
+        // uploadTools.disableFileUpload(opt);//禁用文件上传
+        // uploadTools.disableCleanFile(opt);//禁用清除文件
 
         var uploadId = opt.uploadId;
         var timespan =$("#timespan").val();
@@ -380,10 +382,9 @@ var uploadTools = {
             var formData = new FormData();
             formData.append('image', fileList[i], fileList[i].name);
             formData.append('title', timespan);
-
             $.ajax({
                 type: "post",
-                url: "../albumfile/search/",
+                url: "../albumitemlist/create/",
                 data: formData,
                 processData : false,
                 contentType : false,
@@ -392,7 +393,7 @@ var uploadTools = {
                     uploadTools.getFileUploadPregressMsg(uploadId, i);
                 },
                 error:function(e){
-                    console.log(i)
+                    console.log(i);
                 }
             });
         };
@@ -532,18 +533,15 @@ var uploadFileList={
 }
 
 function getFileName(){
-    var userId = document.getElementById("userId").innerHTML;
     $.ajax({
         type: 'POST',
         url: "../albumfile/search/",
-        data: {
-            'owner': userId
-        },
+        data: {},
         success: function(dataset){
             shtml = '<select name="timespan" id="timespan" style="width:100%;height: 40px;">';
             for(i=0;i<dataset.length;i++)
             {
-                shtml += '<option id="opt" value="' + dataset[i].id + '">' + dataset[i].title + '</option>';
+                shtml += '<option id="opt" value="' + dataset[i].title + '">' + dataset[i].title + '</option>';
             }
             shtml += '</select>'
             document.getElementById("selectFileName").innerHTML = shtml;
@@ -587,15 +585,12 @@ function getAddHtml(){
     document.getElementById("createFileName").innerHTML = temp;
 };
 function createFileName(){
-    var userId = document.getElementById("userId").innerHTML;
     var albumsFileName = document.getElementById("albumsFileName").value;
     var temp = 0;
     $.ajax({
         type: 'POST',
         url: "../albumfile/search/",
-        data: {
-            'owner': userId,
-        },
+        data: {},
         success: function(dataset){
             for(i=0;i<dataset.length;i++)
             {
@@ -613,10 +608,8 @@ function createFileName(){
                     height:300
                 }).toBlob(function(blob){
                     var formData = new FormData();
-                    console.log(blob);
-                    formData.append('cover', blob, albumsFileName + '_cover');
+                    formData.append('cover', blob, albumsFileName + '_cover.jpg');
                     formData.append('title', albumsFileName);
-                    formData.append('owner', userId);
                     $.ajax({
                         type: 'POST',
                         url: "../albumfile/create/",
