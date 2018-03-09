@@ -155,3 +155,18 @@
     text-align: center;
     height: 40px;
 }
+
+#photo {
+    max-width: 100%;
+    border: 1;
+    border-color: #000;
+}
+.img-preview {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+}
+#result {
+    width: 150px;
+    height: 150px;
+}

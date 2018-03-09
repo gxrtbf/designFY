@@ -10,4 +10,9 @@ class AlbumSerializer(serializers.ModelSerializer):
 class AlbumFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlbumFile
+        fields = ('id', 'owner', 'title', 'cover', 'createDate')
+
+class AlbumFileInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlbumFile
         fields = ('id', 'owner', 'title', 'createDate')

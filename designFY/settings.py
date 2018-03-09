@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'apps.album',
     'apps.note',
     'apps.timeline',
-    'apps.lovewords'
+    'apps.lovewords',
 ]
 
 MIDDLEWARE = [

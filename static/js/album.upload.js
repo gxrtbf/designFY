@@ -24,8 +24,49 @@ $.fn.extend({
         uploadFileList.initFileList(opt);
         getFileName();
         getAddHtml();
+        initCropper($('#photo'),$('#input'));
     }
 });
+var initCropper = function (img, input){
+    var $image = img;
+    var options = {
+        aspectRatio: 1, // 纵横比
+        viewMode: 2,
+        preview: '.img-preview' // 预览图的class名
+    };
+    $image.cropper(options);
+    var $inputImage = input;
+    var uploadedImageURL;
+    if (URL) {
+        // 给input添加监听
+        $inputImage.change(function () {
+            var files = this.files;
+            var file;
+            if (!$image.data('cropper')) {
+                return;
+            }
+            if (files && files.length) {
+                file = files[0];
+                // 判断是否是图像文件
+                if (/^image\/\w+$/.test(file.type)) {
+                     // 如果URL已存在就先释放
+                    if (uploadedImageURL) {
+                         URL.revokeObjectURL(uploadedImageURL);
+                    }
+                    uploadedImageURL = URL.createObjectURL(file);
+                    // 销毁cropper后更改src属性再重新创建cropper
+                    $image.cropper('destroy').attr('src', uploadedImageURL).cropper(options);
+                    $inputImage.val('');
+                } else {
+                    window.alert('请选择一个图像文件！');
+                }
+            }
+        });
+    } 
+    else {
+        $inputImage.prop('disabled', true).addClass('disabled');
+    }
+}
 /**
  * 上传基本工具和操作
  */
@@ -527,41 +568,24 @@ function getAddHtml(){
     temp += '<div class="form-group">';
     temp += '<input type="input" class="form-control" id="albumsFileName" name="albumsFileName" placeholder="相册名称">';
     temp += '</div>';
-    temp += '</div><div class="modal-footer">';
+    temp += '<div class="form-group">';
+    temp += '<span class="heading">相册封面</span>';
+    temp += '<img src="" id="photo">';
+    temp += '</div>';
+    temp += '<label for="input" class="btn btn-primary" id="">';
+    temp += '<span>选择图片</span>';
+    temp += '<input type="file" id="input" class="sr-only">';
+    temp += '</label>';
+    temp += '<div>';
+    temp += '<p>预览(100*100)：</p>';
+    temp += '<div class="img-preview"></div>';
+    temp += '</div>';
+    temp += '<div class="modal-footer">';
     temp += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
-    temp += '<button type="submit" class="btn btn-primary" onclick="createFileName()" data-dismiss="modal">Save changes</button>';
+    temp += '<button type="submit" class="btn btn-primary" onclick="createFileName()">Save changes</button>';
     temp += '</div></div></div></div>';
     document.getElementById("createFileName").innerHTML = temp;
 };
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-var csrftoken = getCookie('csrftoken');
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
 function createFileName(){
     var userId = document.getElementById("userId").innerHTML;
     var albumsFileName = document.getElementById("albumsFileName").value;
@@ -583,22 +607,33 @@ function createFileName(){
             if(temp == 1){
                 $("#warn").show();
             }else{
-                $.ajax({
-                    type: 'POST',
-                    url: "../albumfile/create/",
-                    data: {
-                        'owner': userId,
-                        'title': albumsFileName
-                    },
-                    success: function(dataset){
-                        $("#info").show();
-                        getFileName();
-                    },
-                    error: function(){
-                        $("#warn").show();
-                    }
+                var $image = $('#photo');
+                $image.cropper('getCroppedCanvas',{
+                    width:300,
+                    height:300
+                }).toBlob(function(blob){
+                    var formData = new FormData();
+                    console.log(blob);
+                    formData.append('cover', blob, albumsFileName + '_cover');
+                    formData.append('title', albumsFileName);
+                    formData.append('owner', userId);
+                    $.ajax({
+                        type: 'POST',
+                        url: "../albumfile/create/",
+                        data: formData,
+                        processData : false,
+                        contentType : false,
+                        success: function(dataset){
+                            $("#info").show();
+                            getFileName();
+                        },
+                        error: function(){
+                            $("#warn").show();
+                        }
+                    });
                 });
-            }
+            };
         }
     });
+    $('#myModal').modal('hide');
 }

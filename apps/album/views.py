@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from rest_framework import status
 
-from apps.album.serializers import AlbumSerializer, AlbumFileSerializer
+from apps.album.serializers import AlbumSerializer, AlbumFileSerializer, AlbumFileInfoSerializer
 from apps.album.models import Album, AlbumFile
 
 # Create your views here.
@@ -23,11 +23,10 @@ def searchOwnerTitle(request):
 		if owner:
 			albumfile = AlbumFile.objects.filter(owner=owner)
 			if albumfile:
-				serializer = AlbumFileSerializer(albumfile, many=True)
-				print(serializer.data)
+				serializer = AlbumFileInfoSerializer(albumfile, many=True)
 				return Response(serializer.data)
 			else:
-				return JsonResponse({},status=403)
+				return JsonResponse({'info': 'None'}, status=200)
 		else:
 			return JsonResponse({'error': 'input error'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
@@ -36,12 +35,15 @@ def searchOwnerTitle(request):
 @api_view(['POST'])
 def createOwnerTitle(request):
 	if request.method == 'POST':
+		print(request.POST)
+		print(request.FILES)
 		owner = request.POST.get('owner', None)
 		title = request.POST.get('title', None)
-		if owner and title:
+		cover = request.FILES.get('cover', None)
+		if owner and title and cover:
 			user = User.objects.filter(id=owner)
 			if user:
-				albumfile = AlbumFile(owner=user[0], title=title)
+				albumfile = AlbumFile(owner=user[0], title=title, cover=cover)
 				albumfile.save()
 				return JsonResponse({'info': 'create success'}, status=200)
 			else:
