@@ -1,4 +1,29 @@
 $(document).ready(function(e) {
+
+    var title = document.getElementById("title").innerHTML;
+    $.ajax({
+        type: 'POST',
+        url: "../../albumitemlist/search/",
+        data: {
+            'title': title,
+        },
+        async: false,
+        success: function(dataset){
+            console.log(dataset)
+            ht = ''
+            for (var i=0; i<=dataset.length-1; i++) {
+                ht += '<div class="line-normal-wrapper">'
+                ht += '<img src="'
+                ht += dataset[i].image
+                ht += '" style="width: 100%;height: 100%;"/></div>'
+                ht += '<div class="line-btn-delete"><form action="/dfda/" method="post"><button value="'
+                ht += dataset[i].id
+                ht += '">删除</button</form></div>'
+            }
+            document.getElementById("content").innerHTML = ht;
+        }
+    });
+
     // 设定每一行的宽度=屏幕宽度+按钮宽度
     $(".line-scroll-wrapper").width($(".line-wrapper").width() + $(".line-btn-delete").width());
     // 设定常规信息区域宽度=屏幕宽度
@@ -90,26 +115,4 @@ $(document).ready(function(e) {
             }
         });
     }
-    $.ajax({
-        type: 'POST',
-        url: "../albumitemlist/search/",
-        data: {
-            'cover': 'needCover',
-        },
-        success: function(dataset){
-            ht = ''
-            for (var i=0; i<=dataset.length-1; i++) {
-                ht += '<div class="albumitem">'
-                ht += '<div class="imageitem">'
-                ht += '<a href="../albumFile/'
-                ht += dataset[i].id
-                ht += '"><img src="'
-                ht += dataset[i].cover
-                ht += '" style="width: 100%;height: 100%;"><p>'
-                ht += dataset[i].title
-                ht += '</p></a></div></div>'
-            }
-            document.getElementById("albumlist").innerHTML = ht;
-        }
-    });
 });

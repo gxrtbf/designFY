@@ -13,8 +13,8 @@ from apps.album.models import Album, AlbumFile
 def album_view(request):
 	return render(request, 'album.html')
 
-def albumitem_view(request,key):
-	return render(request, 'albumitem.html')
+def albumitem_view(request, title):
+	return render(request, 'albumitem.html',{'title': title})
 
 def albumupload_view(request):
 	return render(request, 'albumupload.html')
@@ -58,10 +58,10 @@ def createOwnerTitle_view(request):
 def searchAlbumList_view(request):
 	if request.method == 'POST':
 		title = request.POST.get('title', None)
-		if owner and title:
+		if title:
 			albumfile = AlbumFile.objects.filter(owner=request.user, title=title)
 			if albumfile:
-				albums = Album.objects.filter(title=albumfile)
+				albums = Album.objects.filter(title=albumfile[0])
 				if albums:
 					serializer = AlbumSerializer(albums, many=True)
 					return Response(serializer.data)

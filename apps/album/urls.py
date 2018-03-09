@@ -5,7 +5,7 @@ from apps.album import views
 
 urlpatterns = [
     path('album/', views.album_view, name='album'),
-    path('albumItem/<int:key>/', views.albumitem_view, name='albumitem'),
+    path('albumItem/<str:title>/', views.albumitem_view, name='albumitem'),
     path('albumLoad/', views.albumupload_view, name='album-upload'),
     path('albumfile/search/', views.searchOwnerTitle_view),
     path('albumfile/create/', views.createOwnerTitle_view),
