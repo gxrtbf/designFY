@@ -1,118 +1,104 @@
-$(document).ready(function(e) {
-
+$(function(){
     var title = document.getElementById("title").innerHTML;
+    var windowWidth = $(window).width();
     $.ajax({
         type: 'POST',
         url: "../../albumitemlist/search/",
-        data: {
-            'title': title,
-        },
         async: false,
+        data: {
+            'title': title
+        },
         success: function(dataset){
-            console.log(dataset)
+            console.log(dataset);
             ht = ''
-            for (var i=0; i<=dataset.length-1; i++) {
-                ht += '<div class="line-normal-wrapper">'
-                ht += '<img src="'
+            for(i=0;i<dataset.length;i++)
+            {
+                ht += '<img class="imageitem" src="'
                 ht += dataset[i].image
-                ht += '" style="width: 100%;height: 100%;"/></div>'
-                ht += '<div class="line-btn-delete"><form action="/dfda/" method="post"><button value="'
+                ht += '" height="'
+                ht += windowWidth/2 - 20
+                ht += '" width="'
+                ht += windowWidth/2 - 20
+                ht += '" value="'
                 ht += dataset[i].id
-                ht += '">删除</button</form></div>'
+                ht += '"/>'
             }
-            document.getElementById("content").innerHTML = ht;
+            document.getElementById("imagelist").innerHTML = ht;
         }
     });
-
-    // 设定每一行的宽度=屏幕宽度+按钮宽度
-    $(".line-scroll-wrapper").width($(".line-wrapper").width() + $(".line-btn-delete").width());
-    // 设定常规信息区域宽度=屏幕宽度
-    $(".line-normal-wrapper").width($(".line-wrapper").width());
-
-    // 获取所有行，对每一行设置监听
-    var lines = $(".line-normal-wrapper");
-    var len = lines.length; 
-    var lastX, lastXForMobile;
-
-    // 用于记录被按下的对象
-    var pressedObj;  // 当前左滑的对象
-    var lastLeftObj; // 上一个左滑的对象
-
-    // 用于记录按下的点
-    var start;
-
-    // 网页在移动端运行时的监听
-    for (var i = 0; i < len; ++i) {
-        lines[i].addEventListener('touchstart', function(e){
-            lastXForMobile = e.changedTouches[0].pageX;
-            pressedObj = this; // 记录被按下的对象 
-
-            // 记录开始按下时的点
-            var touches = event.touches[0];
-            start = { 
-                x: touches.pageX, // 横坐标
-                y: touches.pageY  // 纵坐标
-            };
-        });
-
-        lines[i].addEventListener('touchmove',function(e){
-            // 计算划动过程中x和y的变化量
-            var touches = event.touches[0];
-            delta = {
-                x: touches.pageX - start.x,
-                y: touches.pageY - start.y
-            };
-
-            // 横向位移大于纵向位移，阻止纵向滚动
-            if (Math.abs(delta.x) > Math.abs(delta.y)) {
-                event.preventDefault();
-            }
-        });
-
-        lines[i].addEventListener('touchend', function(e){
-            if (lastLeftObj && pressedObj != lastLeftObj) { // 点击除当前左滑对象之外的任意其他位置
-                $(lastLeftObj).animate({marginLeft:"0"}, 500); // 右滑
-                lastLeftObj = null; // 清空上一个左滑的对象
-            }
-            var diffX = e.changedTouches[0].pageX - lastXForMobile;
-            if (diffX < -150) {
-                $(pressedObj).animate({marginLeft:"-132px"}, 500); // 左滑
-                lastLeftObj && lastLeftObj != pressedObj && 
-                    $(lastLeftObj).animate({marginLeft:"0"}, 500); // 已经左滑状态的按钮右滑
-                lastLeftObj = pressedObj; // 记录上一个左滑的对象
-            } else if (diffX > 150) {
-              if (pressedObj == lastLeftObj) {
-                $(pressedObj).animate({marginLeft:"0"}, 500); // 右滑
-                lastLeftObj = null; // 清空上一个左滑的对象
-              }
-            }
-        });
-    }
-
-    // 网页在PC浏览器中运行时的监听
-    for (var i = 0; i < len; ++i) {
-        $(lines[i]).bind('mousedown', function(e){
-            lastX = e.clientX;
-            pressedObj = this; // 记录被按下的对象
-        });
-
-        $(lines[i]).bind('mouseup', function(e){
-            if (lastLeftObj && pressedObj != lastLeftObj) { // 点击除当前左滑对象之外的任意其他位置
-                $(lastLeftObj).animate({marginLeft:"0"}, 500); // 右滑
-                lastLeftObj = null; // 清空上一个左滑的对象
-            }
-            var diffX = e.clientX - lastX;
-            if (diffX < -150) {
-                $(pressedObj).animate({marginLeft:"-132px"}, 500); // 左滑
-                lastLeftObj && lastLeftObj != pressedObj && 
-                    $(lastLeftObj).animate({marginLeft:"0"}, 500); // 已经左滑状态的按钮右滑
-                lastLeftObj = pressedObj; // 记录上一个左滑的对象
-            } else if (diffX > 150) {
-              if (pressedObj == lastLeftObj) {
-                $(pressedObj).animate({marginLeft:"0"}, 500); // 右滑
-                lastLeftObj = null; // 清空上一个左滑的对象
-              }
-            }
-        });
-    }
+    var imgsObj = $('.amplifyImg img');//需要放大的图像
+    if(imgsObj){  
+        $.each(imgsObj,function(){  
+            $(this).click(function(){  
+                var currImg = $(this);
+                var imageId = currImg.attr("value")
+                var icon = '<div class="icon" ><span value="' + imageId + '">删除</span></div>'
+                coverLayer(1);  
+                var tempContainer = $('<div class=tempContainer></div>');//图片容器  
+                with(tempContainer){//width方法等同于$(this)  
+                    appendTo("body");  
+                    var windowWidth=$(window).width();  
+                    var windowHeight=$(window).height();  
+                    //获取图片原始宽度、高度  
+                    var orignImg = new Image();  
+                    orignImg.src =currImg.attr("src") ;  
+                    var currImgWidth= orignImg.width;  
+                    var currImgHeight = orignImg.height;  
+                    if(currImgWidth<windowWidth){//为了让图片不失真，当图片宽度较小的时候，保留原图  
+                        if(currImgHeight<windowHeight){  
+                            var topHeight=(windowHeight-currImgHeight)/2;  
+                            if(topHeight>35){/*此处为了使图片高度上居中显示在整个手机屏幕中：因为在android,ios的微信中会有一个title导航，35为title导航的高度*/  
+                                topHeight=topHeight-35;  
+                                css('top',topHeight);  
+                            }else{  
+                                css('top',0);  
+                            }  
+                            html('<img border=0 src=' + currImg.attr('src') + '>' + icon);  
+                        }else{  
+                            css('top',0);  
+                            html('<img border=0 src=' + currImg.attr('src') + ' height='+windowHeight+'>' + icon);  
+                        }  
+                    }
+                    else{  
+                        var currImgChangeHeight=(currImgHeight*windowWidth)/currImgWidth;  
+                        if(currImgChangeHeight<windowHeight){  
+                            var topHeight=(windowHeight-currImgChangeHeight)/2;  
+                            if(topHeight>35){  
+                                topHeight=topHeight-35;  
+                                css('top',topHeight);  
+                            }else{  
+                                css('top',0);  
+                            }  
+                            html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+';>' + icon);  
+                        }else{  
+                            css('top',0);  
+                            html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+'; height='+windowHeight+'>' + icon);  
+                        }  
+                    }  
+                }  
+                tempContainer.click(function(){  
+                    $(this).remove();  
+                    coverLayer(0);  
+                    });  
+            });  
+        });  
+    }  
+    else{  
+        console.log('error');  
+    }  
 });
+
+//使用禁用蒙层效果  
+function coverLayer(tag){  
+    with($('.over')){  
+        if(tag==1){  
+            css('height',$(document).height());  
+            css('display','block');  
+            css('opacity',1);  
+            css("background-color","#191919");  
+        }  
+        else{  
+            css('display','none');  
+        }  
+    }  
+}  

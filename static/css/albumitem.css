@@ -1,67 +1,32 @@
-.line-wrapper { 
-	width: 100%; 
-	height: auto; 
-	overflow: hidden; 
-	font-size: 28px; 
-	background: url(../image/albumitem-bg.jpg);
-	background-size: 100%;
+.over {
+	position: fixed; 
+	left:0; 
+	top:0; 
+	width:100%; 
+	z-index:100;
+}  
+.tempContainer {
+	position:fixed; 
+	width:100%;
+	left: 0;
+	z-index:101;
 }
-.line-scroll-wrapper { 
-	white-space: nowrap; 
-	height: 220px; 
-	clear: both; 
+.icon {
+	text-align:center; 
+	z-index:102;
+	width:100%;
+	font-size: 25px;
+	color: red;
+	left: 0;   
+    bottom: 0;
+	position: fixed;
 }
-.line-btn-delete { 
-	float: left; 
-	width: 100px; 
-	height: 98%;
+.imagelist {
+	display: inline-block;
+	margin: auto auto; 
 }
-.line-btn-delete button { 
-	width: 100%; 
-	height: 100%; 
-	background: red; 
-	border: none; 
-	font-size: 24px; 
-	font-family: 'Microsoft Yahei'; 
-	color: #fff; 
-}
-.line-normal-wrapper { 
-	display: inline-block; 
-	float: left;
-}
-.cover-btn { 
-	float: left; 
-	width: 100px; 
-	height: 100%;
-}
-.cover-btn-update { 
-	float: left; 
-	width: 100px; 
-	height: 48%;
-}
-.cover-btn-update button { 
-	width: 100%; 
-	height: 100%; 
-	background: green;
-	border: none; 
-	font-size: 24px; 
-	font-family: 'Microsoft Yahei'; 
-	color: #fff; 
-}
-.cover-btn-delete { 
-	float: left; 
-	width: 100px; 
-	height: 48%;
-}
-.cover-btn-delete button { 
-	width: 100%; 
-	height: 100%; 
-	background: red; 
-	border: none; 
-	font-size: 24px; 
-	font-family: 'Microsoft Yahei'; 
-	color: #fff; 
-}
-.cover-normal-wrapper { 
-	height: 200px;
+
+.imageitem {
+	margin: 2px;
+	border: 2px solid;
 }

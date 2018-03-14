@@ -1,0 +1,28 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<title>主页</title>
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/album.css' %}">
+</head>
+<body>
+	<div class="main">
+		<div class="header-fixed">
+			<img src="{% static 'image/index-title.jpg' %}" alt="..." style="width: 100%;height: 100%;">
+		</div>
+		<div class="albumlist" id="albumlist"></div>
+		<div class="footer-fixed">
+			<a class="btn btn-success ibutoom" href="{% url 'album-upload' %}">记本本</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/submit.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/album.js' %}"></script>
+</body>
+</html>
