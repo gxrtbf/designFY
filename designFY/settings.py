@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.note',
     'apps.timeline',
     'apps.lovewords',
+    'apps.reward',
 ]
 
 MIDDLEWARE = [

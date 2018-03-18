@@ -16,6 +16,9 @@ class AlbumFile(models.Model):
 	class Meta:
 		ordering = ('createDate',)
 
+	def __str__(self):
+		return self.title
+
 def image_directory_path(instance, filename):
 	# file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
 	return 'photos/{0}/{1}'.format(instance.title.title, filename)
@@ -28,3 +31,6 @@ class Album(models.Model):
 
 	class Meta:
 		ordering = ('createDate',)
+
+	def __str__(self):
+		return self.id
