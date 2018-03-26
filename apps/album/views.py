@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from rest_framework import status
 
 from django.conf import settings
+import uuid
 
 from apps.album.serializers import AlbumSerializer, AlbumFileSerializer, AlbumFileInfoSerializer
 from apps.album.models import Album, AlbumFile
@@ -83,13 +84,14 @@ def createAlbumList_view(request):
 	if request.method == 'POST':
 		title = request.POST.get('title', None)
 		image = request.FILES.get('image', None)
+		image.name = str(uuid.uuid1()) + '.png'
 		filepath = settings.MEDIA_ROOT + '/photos/' + title + '/' + image.name
 		if title and image:
 			albumfile = AlbumFile.objects.filter(owner=request.user, title=title)
 			if albumfile:
 				albums = Album(title=albumfile[0], image=image)
 				albums.save()
-				reduce_quantile(filepath, image.size)
+				reduce_quantile(filepath)
 				return JsonResponse({'info': 'create success'}, status=200)
 			else:
 				return JsonResponse({'info': 'alnumfile none'}, status=200)

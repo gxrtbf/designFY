@@ -1,3 +1,4 @@
+{% load static from staticfiles %}
 <!DOCTYPE html>  
 <html lang="zh-CN">  
 <head>  
@@ -14,14 +15,20 @@
 <body>  
     <div class="booth">
         <video id="video" width="400" height="300" autoplay></video>
+        <button id='tack'> snap shot </button>
+        <canvas id='canvas' width='400' height='300'></canvas>
     </div>
-</body>  
+</body>
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/submit.js' %}"></script>
 <script type="text/javascript">  
     var getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+    var canvas = document.getElementById('canvas');
+    var video = document.getElementById('video');
+    var tack = document.getElementById('tack');
     getUserMedia.call(navigator, {
         video: true 
-    }, function(localMediaStream) {   
-        var video = document.getElementById('video');   
+    }, function(localMediaStream) {
         video.src = window.URL.createObjectURL(localMediaStream);
         video.onloadedmetadata = function(e) {   
             console.log("Label: " + localMediaStream.label);   
@@ -30,6 +37,26 @@
         };   
     }, function(e) {   
         console.log('Reeeejected!', e);   
+    });
+    tack.addEventListener('click', function(){
+        canvas.getContext('2d').drawImage(video, 0, 0, 400, 300);
+        canvas.toBlob(function(blob){
+            var formData = new FormData();
+            formData.append('outlook', blob, 'temp.jpg');
+            $.ajax({
+                type: 'POST',
+                url: "../outlook/findface/",
+                data: formData,
+                processData : false,
+                contentType : false,
+                success: function(dataset){
+
+                },
+                error: function(){
+
+                }
+            });
+        });
     });
 </script>  
 <html>  

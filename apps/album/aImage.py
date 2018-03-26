@@ -1,6 +1,8 @@
 import os
 from PIL import Image
 
-def reduce_quantile(path,size):
+def reduce_quantile(path):
 	im = Image.open(path)
-	im.save(path, quality = int(40000/size))
+	width,height = im.size
+	im = im.resize((400,int(400*height/width)), Image.ANTIALIAS) 
+	im.save(path, quality = 50)
