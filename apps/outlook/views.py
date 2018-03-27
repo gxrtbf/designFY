@@ -18,16 +18,19 @@ def findface_view(request):
 		outlook = request.FILES.get('outlook', None)
 		if outlook:
 			img = Image.open(outlook)
-			img.save(settings.MEDIA_ROOT+'/temp.jpg')
+			img.save(settings.MEDIA_ROOT+'/temp.png')
 
 			aipFace = detect.aipFace
 			options = {
 				'max_face_num': 1,
-				'face_fields': "age,beauty,expression,faceshape"
+				'face_fields': "age,beauty,expression,faceshape,gender,glasses,race"
 			}
-			with open(settings.MEDIA_ROOT+'/temp.jpg', 'rb') as fp:
+			with open(settings.MEDIA_ROOT+'/temp.png', 'rb') as fp:
 				result = aipFace.detect(fp.read(), options)
-				return JsonResponse({'info': result}, status=200)
+				if result['result_num'] == 1:
+					return JsonResponse({'info': result['result']}, status=200)
+				else:
+					return JsonResponse({'info': 'no detect people'}, status=status.HTTP_400_BAD_REQUEST)
 		else:
 			return JsonResponse({'info': 'None'}, status=200)
 	else:

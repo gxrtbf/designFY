@@ -2,61 +2,40 @@
 <!DOCTYPE html>  
 <html lang="zh-CN">  
 <head>  
-    <meta charset="UTF-8">  
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>GetUserMedia实例</title>
-    <style>
-        .booth {
-            width: 400px;
-            border: 10px solid #ddd;
-            margin: 0 auto;
-        }
-  </style>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/outlook.css' %}">
 </head>  
 <body>  
-    <div class="booth">
-        <video id="video" width="400" height="300" autoplay></video>
-        <button id='tack'> snap shot </button>
-        <canvas id='canvas' width='400' height='300'></canvas>
+    <div class="container-fluid contents">
+        <div class="conrow" style="margin-top: 40px; margin-bottom: 15px;">
+            <p style="font-size: 25px;"> 焉知几何？ </p>
+        </div>
+        <div class="conrow">
+            <video id="video" width="350" height="260" autoplay></video>
+        </div>
+        <div class="conrow">
+            <button id='tack' type="button" class="btn btn-success btn-lg active"> 测一测 </button>
+        </div>
+        <div class="conrow" style="margin-top: 15px; margin-bottom: 15px;">
+            <div  class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"> 测试结果 </h3>
+                </div>
+                <div style="margin-top: 15px; margin-bottom: 15px;">
+                    <canvas id='canvas' width='350' height='260' ></canvas>
+                    <div class="panel-body" id="yanzhi"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
+<script type="text/javascript" src="{% static 'js/echarts.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/outlook.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/submit.js' %}"></script>
-<script type="text/javascript">  
-    var getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
-    var canvas = document.getElementById('canvas');
-    var video = document.getElementById('video');
-    var tack = document.getElementById('tack');
-    getUserMedia.call(navigator, {
-        video: true 
-    }, function(localMediaStream) {
-        video.src = window.URL.createObjectURL(localMediaStream);
-        video.onloadedmetadata = function(e) {   
-            console.log("Label: " + localMediaStream.label);   
-            console.log("AudioTracks" , localMediaStream.getAudioTracks());   
-            console.log("VideoTracks" , localMediaStream.getVideoTracks());   
-        };   
-    }, function(e) {   
-        console.log('Reeeejected!', e);   
-    });
-    tack.addEventListener('click', function(){
-        canvas.getContext('2d').drawImage(video, 0, 0, 400, 300);
-        canvas.toBlob(function(blob){
-            var formData = new FormData();
-            formData.append('outlook', blob, 'temp.jpg');
-            $.ajax({
-                type: 'POST',
-                url: "../outlook/findface/",
-                data: formData,
-                processData : false,
-                contentType : false,
-                success: function(dataset){
-
-                },
-                error: function(){
-
-                }
-            });
-        });
-    });
-</script>  
 <html>  
