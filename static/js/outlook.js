@@ -21,7 +21,7 @@ $(function(){
             // console.log("AudioTracks" , localMediaStream.getAudioTracks());   
             console.log("VideoTracks" , localMediaStream.getVideoTracks());   
         };   
-    }, function(e) {   
+    }, function(e) {
         console.log('Reeeejected!', e);   
     });
     tack.addEventListener('click', function(){
