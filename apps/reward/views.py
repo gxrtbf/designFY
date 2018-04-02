@@ -4,15 +4,17 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from rest_framework import status
+from django.contrib.auth.decorators import login_required
 
 from apps.reward.serializers import ActivityObjectSerializer, RewardSerializer, RewardRecordSerializer
 from apps.reward.models import Activity, ActivityObject, Reward, RewardRecord
 
 # Create your views here.
-
+@login_required
 def reward_view(request):
 	return render(request, 'reward.html')
 
+@login_required
 @api_view(['POST'])
 def searchActivityObjectNum_view(request):
 	if request.method == 'POST':
@@ -33,6 +35,7 @@ def searchActivityObjectNum_view(request):
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
 
+@login_required
 @api_view(['POST'])
 def searchActivityObject_view(request):
 	if request.method == 'POST':
@@ -53,6 +56,7 @@ def searchActivityObject_view(request):
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
 
+@login_required
 @api_view(['POST'])
 def searchRewardRecord_view(request):
 	if request.method == 'POST':
@@ -77,6 +81,7 @@ def searchRewardRecord_view(request):
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
 
+@login_required
 @api_view(['POST'])
 def updateActivity_view(request):
 	if request.method == 'POST':

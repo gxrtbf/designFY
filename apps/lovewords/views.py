@@ -4,13 +4,16 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from rest_framework import status
+from django.contrib.auth.decorators import login_required
 
 from apps.album.serializers import LoveWordsSerializer
 from apps.album.models import LoveWords
 
+@login_required
 def lovewords_view(request):
 	return render(request, 'lovewords.html')
 
+@login_required
 @api_view(['POST'])
 def searchOwnerTitle_view(request):
 	if request.method == 'POST':

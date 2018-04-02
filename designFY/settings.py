@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
 
 # Application definition
 
@@ -113,6 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = '/designfy/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

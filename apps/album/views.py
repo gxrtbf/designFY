@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from rest_framework import status
+from django.contrib.auth.decorators import login_required
 
 from django.conf import settings
 import uuid
@@ -15,15 +16,19 @@ from apps.album.aImage import reduce_quantile
 
 # Create your views here.
 
+@login_required
 def album_view(request):
 	return render(request, 'album.html')
 
+@login_required
 def albumitem_view(request, title):
 	return render(request, 'albumitem.html',{'title': title})
 
+@login_required
 def albumupload_view(request):
 	return render(request, 'albumupload.html')
 
+@login_required
 @api_view(['POST'])
 def searchOwnerTitle_view(request):
 	if request.method == 'POST':
@@ -44,7 +49,8 @@ def searchOwnerTitle_view(request):
 				return JsonResponse({'info': 'None'}, status=200)
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
-	
+
+@login_required	
 @api_view(['POST'])
 def createOwnerTitle_view(request):
 	if request.method == 'POST':
@@ -59,6 +65,7 @@ def createOwnerTitle_view(request):
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
 
+@login_required
 @api_view(['POST'])
 def searchAlbumList_view(request):
 	if request.method == 'POST':
@@ -79,6 +86,7 @@ def searchAlbumList_view(request):
 	else:
 		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
 
+@login_required
 @api_view(['POST'])
 def createAlbumList_view(request):
 	if request.method == 'POST':

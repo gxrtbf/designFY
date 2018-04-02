@@ -3,15 +3,19 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from django.conf import settings
+from rest_framework import status
 from PIL import Image
+from django.contrib.auth.decorators import login_required
 
 from apps.outlook import detect
 
 # Create your views here.
 
+@login_required
 def outlook_view(request):
 	return render(request, 'outlook.html')
 
+@login_required
 @api_view(['POST'])
 def findface_view(request):
 	if request.method == 'POST':
