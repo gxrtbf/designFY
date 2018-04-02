@@ -1,11 +1,21 @@
 $(document).ready(function(){
 	//可抽奖次数
 	var clickNum = 1;
+	// 活动代码
+	var acId = 1;
+	$.ajax({
+        type: 'GET',
+        url: "../activity/search/",
+        async: false,
+        success: function(dataset){
+        	acId = dataset[0].id
+        }
+    });
 	$.ajax({
         type: 'POST',
         url: "../rewardNum/search/",
         data: {
-        	'acId': 1,
+        	'acId': acId,
         },
         async: false,
         success: function(dataset){
@@ -33,7 +43,7 @@ $(document).ready(function(){
         type: 'POST',
         url: "../rewardObject/search/",
         data: {
-        	'acId': 1,
+        	'acId': acId,
         },
         async: false,
         success: function(dataset){
@@ -68,7 +78,7 @@ $(document).ready(function(){
 		        type: 'POST',
 		        url: "../rewardRecord/update/",
 		        data: {
-		        	'acId': 1,
+		        	'acId': acId,
 		        	'object': object,
 		        },
 		        async: false,
@@ -305,7 +315,7 @@ function addRecord(){
         type: 'POST',
         url: "../rewardRecord/search/",
         data: {
-        	'acId': 1,
+        	'acId': acId,
         },
         async: false,
         success: function(dataset){

@@ -6,13 +6,26 @@ from django.http import JsonResponse
 from rest_framework import status
 from django.contrib.auth.decorators import login_required
 
-from apps.reward.serializers import ActivityObjectSerializer, RewardSerializer, RewardRecordSerializer
+from apps.reward.serializers import ActivitySerializer, ActivityObjectSerializer, RewardSerializer, RewardRecordSerializer
 from apps.reward.models import Activity, ActivityObject, Reward, RewardRecord
 
 # Create your views here.
 @login_required
 def reward_view(request):
 	return render(request, 'reward.html')
+
+@login_required
+@api_view(['GET'])
+def searchActivity_view(request):
+	if request.method == 'GET':
+		activity = Activity.objects.filter(is_active=0)
+		if activity:
+			serializer = ActivitySerializer(activity, many=True)
+			return Response(serializer.data)
+		else:
+			return JsonResponse({'error': 'activity error'}, status=status.HTTP_400_BAD_REQUEST)
+	else:
+		return JsonResponse({'error': 'request method error'}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
 @api_view(['POST'])
