@@ -27,7 +27,6 @@ $(function(){
             document.getElementById("imagelist").innerHTML = ht;
         }
     });
-    var albumId = '';
     $.ajax({
         type: 'POST',
         url: "../../albumfile/search/",
@@ -37,8 +36,7 @@ $(function(){
             'cover': 'needCover',
         },
         success: function(dataset){
-            console.log(dataset)
-            albumId = dataset[0].id
+            document.getElementById("albumId").innerHTML = dataset[0].id;
             document.getElementById("albumsFileName").value = dataset[0].title;
             document.getElementById("photo").src = dataset[0].cover;
         }
@@ -97,7 +95,7 @@ $(function(){
                 $('#dimage').click(function(){  
                     var imageId = $(this).attr("value");
                     $(".item").attr('onclick', '').unbind('click');
-                    makesure(imageId)
+                    deletealbumfile(imageId)
                 }); 
                 $('.item').click(function(){  
                     tempContainer.remove();  
@@ -165,165 +163,232 @@ $(function(){
         }
     }
     initCropper($('#photo'),$('#input'));
+
+
 });
-
 //使用禁用蒙层效果  
-function coverLayer(tag){  
-    with($('.over')){  
-        if(tag==1){  
-            css('height',$(document).height());  
-            css('display','block');  
-            css('opacity',1);  
-            css("background-color","#191919");  
+    function coverLayer(tag){  
+        with($('.over')){  
+            if(tag==1){  
+                css('height',$(document).height());  
+                css('display','block');  
+                css('opacity',1);  
+                css("background-color","#191919");  
+            }  
+            else{  
+                css('display','none');  
+            }  
         }  
-        else{  
-            css('display','none');  
-        }  
-    }  
-}
+    }
 
-function cancelcoverLayer(){
-    $('.tempContainer').remove();  
-    coverLayer(0); 
-}
+    function cancelcoverLayer(){
+        $('.tempContainer').remove();  
+        coverLayer(0); 
+    }
 
-function makesure(imageId)
-{
-    var shield = document.createElement("DIV");
-    shield.id = "shield";
-    shield.style.position = "absolute";
-    shield.style.left = "50%";
-    shield.style.top = "50%";
-    shield.style.width = "280px";
-    shield.style.height = "150px";
-    shield.style.marginLeft = "-140px";
-    shield.style.marginTop = "-110px";
-    shield.style.zIndex = "25";
-    var alertFram = document.createElement("DIV");
-    alertFram.id="alertFram";
-    alertFram.style.position = "absolute";
-    alertFram.style.width = "280px";
-    alertFram.style.height = "150px";
-    alertFram.style.left = "50%";
-    alertFram.style.top = "50%";
-    alertFram.style.marginLeft = "-140px";
-    alertFram.style.marginTop = "-110px";
-    alertFram.style.textAlign = "center";
-    alertFram.style.lineHeight = "150px";
-    alertFram.style.zIndex = "300";
-    strHtml = "<ul class='dialog'>\n";
-    strHtml += " <li class='dialog-header'>删除图片</li>\n";
-    strHtml += " <li class='dialog-content'> 确认删除？ </li>\n";
-    strHtml += " <li class='dialog-footer'><input class='dialog-footer-queren' type='button' value='确 定' onclick='doOk()'><input class='dialog-footer-queren' type='button' value='取 消' onclick='doCancel()'></li>\n";
-    strHtml += "</ul>\n";
-    alertFram.innerHTML = strHtml;
-    document.body.appendChild(alertFram);
-    document.body.appendChild(shield);
-    this.doOk = function(){
-        alertFram.style.display = "none";
-        shield.style.display = "none";
-        $.ajax({
-            type: 'POST',
-            url: "../../albumitemlist/delete/",
-            async: false,
-            data: {
-                'id': imageId
-            },
-            success: function(dataset){
-                alert(imageId, dataset.info);
-            }
+    function updateFileName(){
+        var albumId = document.getElementById("albumId").innerHTML
+        var albumsFileName = document.getElementById("albumsFileName").value;
+        var $image = $('#photo');
+        $image.cropper('getCroppedCanvas',{
+            width:300,
+            height:300
+        }).toBlob(function(blob){
+            var formData = new FormData();
+            formData.append('cover', blob, albumsFileName + '_cover.jpg');
+            formData.append('title', albumsFileName);
+            formData.append('id', albumId);
+            $.ajax({
+                type: 'POST',
+                url: "../../albumfile/update/",
+                data: formData,
+                processData : false,
+                contentType : false,
+                success: function(dataset){
+                },
+                error: function(){
+                }
+            });
         });
+        $('#exampleModal').modal('hide');
     }
-    this.doCancel = function(){
-        alertFram.style.display = "none";
-        shield.style.display = "none";
-        $(".item").attr('onclick', 'cancelcoverLayer()').bind('click');
-    }
-    alertFram.focus();
-    document.body.onselectstart = function(){return false;};
-}
 
-window.alert = function(imageId, info)
-{
-    var shield = document.createElement("DIV");
-    shield.id = "shield";
-    shield.style.position = "absolute";
-    shield.style.left = "50%";
-    shield.style.top = "50%";
-    shield.style.width = "280px";
-    shield.style.height = "150px";
-    shield.style.marginLeft = "-140px";
-    shield.style.marginTop = "-110px";
-    shield.style.zIndex = "25";
-    var alertFram = document.createElement("DIV");
-    alertFram.id="alertFram";
-    alertFram.style.position = "absolute";
-    alertFram.style.width = "280px";
-    alertFram.style.height = "150px";
-    alertFram.style.left = "50%";
-    alertFram.style.top = "50%";
-    alertFram.style.marginLeft = "-140px";
-    alertFram.style.marginTop = "-110px";
-    alertFram.style.textAlign = "center";
-    alertFram.style.lineHeight = "150px";
-    alertFram.style.zIndex = "300";
-    strHtml = "<ul class='dialog'>\n";
-    strHtml += " <li class='dialog-header'>删除图片</li>\n";
-    strHtml += " <li class='dialog-content'>" + info + "</li>\n";
-    strHtml += " <li class='dialog-footer'><input class='dialog-footer-queren' type='button' value='确 定' onclick='doOk()'></li>\n";
-    strHtml += "</ul>\n";
-    alertFram.innerHTML = strHtml;
-    document.body.appendChild(alertFram);
-    document.body.appendChild(shield);
-    this.doOk = function(){
-        alertFram.style.display = "none";
-        shield.style.display = "none";
-        cancelcoverLayer();
-        $('#iimage' + imageId).remove();  
-    }
-    alertFram.focus();
-    document.body.onselectstart = function(){return false;};
-}
-
-function updateFileName(){
-    var albumsFileName = document.getElementById("albumsFileName").value;
-    var $image = $('#photo');
-    $image.cropper('getCroppedCanvas',{
-        width:300,
-        height:300
-    }).toBlob(function(blob){
+    function deleteFileName(){
+        var albumId = document.getElementById("albumId").innerHTML
         var formData = new FormData();
-        formData.append('cover', blob, albumsFileName + '_cover.jpg');
-        formData.append('title', albumsFileName);
         formData.append('id', albumId);
         $.ajax({
             type: 'POST',
-            url: "../albumfile/create/",
+            url: "../../albumfile/delete/",
             data: formData,
             processData : false,
             contentType : false,
             success: function(dataset){
+                window.history.back(-1); 
             },
             error: function(){
             }
         });
-    });
-    $('#exampleModal').modal('hide');
-}
+        $('#exampleModal').modal('hide');
+    }
 
-function deleteFileName(){
-    $.ajax({
-        type: 'POST',
-        url: "../albumfile/delete/",
-        data: {
-            'id': albumId,
-        },
-        processData : false,
-        contentType : false,
-        success: function(dataset){
-        },
-        error: function(){
+    function deletealbumfile(imageId){
+        var shield = document.createElement("DIV");
+        shield.id = "shield";
+        shield.style.position = "absolute";
+        shield.style.left = "50%";
+        shield.style.top = "50%";
+        shield.style.width = "280px";
+        shield.style.height = "150px";
+        shield.style.marginLeft = "-140px";
+        shield.style.marginTop = "-110px";
+        shield.style.zIndex = "1500";
+        var alertFram = document.createElement("DIV");
+        alertFram.id="alertFram";
+        alertFram.style.position = "absolute";
+        alertFram.style.width = "280px";
+        alertFram.style.height = "150px";
+        alertFram.style.left = "50%";
+        alertFram.style.top = "50%";
+        alertFram.style.marginLeft = "-140px";
+        alertFram.style.marginTop = "-110px";
+        alertFram.style.textAlign = "center";
+        alertFram.style.lineHeight = "150px";
+        alertFram.style.zIndex = "2000";
+        strHtml = "<ul class='dialog'>\n";
+        strHtml += " <li class='dialog-header'>删除图片</li>\n";
+        strHtml += " <li class='dialog-content'> 确认删除？ </li>\n";
+        strHtml += " <li class='dialog-footer'><input class='dialog-footer-queren' type='button' value='确 定' onclick='doOk()'><input class='dialog-footer-queren' type='button' value='取 消' onclick='doCancel()'></li>\n";
+        strHtml += "</ul>\n";
+        alertFram.innerHTML = strHtml;
+        document.body.appendChild(alertFram);
+        document.body.appendChild(shield);
+        this.doOk = function(){
+            alertFram.style.display = "none";
+            shield.style.display = "none";
+            $.ajax({
+                type: 'POST',
+                url: "../../albumitemlist/delete/",
+                async: false,
+                data: {
+                    'id': imageId
+                },
+                success: function(dataset){
+                    alert(imageId, dataset.info);
+                }
+            });
         }
-    });
-    $('#exampleModal').modal('hide');
-}
+        this.doCancel = function(){
+            alertFram.style.display = "none";
+            shield.style.display = "none";
+            $(".item").attr('onclick', 'cancelcoverLayer()').bind('click');
+        }
+        alertFram.focus();
+        document.body.onselectstart = function(){return false;};
+    }
+
+    window.alert = function(imageId=null, info){
+        var shield = document.createElement("DIV");
+        shield.id = "shield";
+        shield.style.position = "absolute";
+        shield.style.left = "50%";
+        shield.style.top = "50%";
+        shield.style.width = "280px";
+        shield.style.height = "150px";
+        shield.style.marginLeft = "-140px";
+        shield.style.marginTop = "-110px";
+        shield.style.zIndex = "1500";
+        var alertFram = document.createElement("DIV");
+        alertFram.id="alertFram";
+        alertFram.style.position = "absolute";
+        alertFram.style.width = "280px";
+        alertFram.style.height = "150px";
+        alertFram.style.left = "50%";
+        alertFram.style.top = "50%";
+        alertFram.style.marginLeft = "-140px";
+        alertFram.style.marginTop = "-110px";
+        alertFram.style.textAlign = "center";
+        alertFram.style.lineHeight = "150px";
+        alertFram.style.zIndex = "2000";
+        strHtml = "<ul class='dialog'>\n";
+        strHtml += " <li class='dialog-header'>删除</li>\n";
+        strHtml += " <li class='dialog-content'>" + info + "</li>\n";
+        strHtml += " <li class='dialog-footer'><input class='dialog-footer-queren' type='button' value='确 定' onclick='doOk()'></li>\n";
+        strHtml += "</ul>\n";
+        alertFram.innerHTML = strHtml;
+        document.body.appendChild(alertFram);
+        document.body.appendChild(shield);
+        this.doOk = function(){
+            alertFram.style.display = "none";
+            shield.style.display = "none";
+            if(imageId!=null){
+                cancelcoverLayer();
+                $('#iimage' + imageId).remove();  
+            } else {
+                window.history.back(-1);
+            }
+        }
+        alertFram.focus();
+        document.body.onselectstart = function(){return false;};
+    }
+
+    function deletealbum(imageId){
+        var shield = document.createElement("DIV");
+        shield.id = "shield";
+        shield.style.position = "absolute";
+        shield.style.left = "50%";
+        shield.style.top = "50%";
+        shield.style.width = "280px";
+        shield.style.height = "150px";
+        shield.style.marginLeft = "-140px";
+        shield.style.marginTop = "-110px";
+        shield.style.zIndex = "1500";
+        var alertFram = document.createElement("DIV");
+        alertFram.id="alertFram";
+        alertFram.style.position = "absolute";
+        alertFram.style.width = "280px";
+        alertFram.style.height = "150px";
+        alertFram.style.left = "50%";
+        alertFram.style.top = "50%";
+        alertFram.style.marginLeft = "-140px";
+        alertFram.style.marginTop = "-110px";
+        alertFram.style.textAlign = "center";
+        alertFram.style.lineHeight = "150px";
+        alertFram.style.zIndex = "2000";
+        strHtml = "<ul class='dialog'>\n";
+        strHtml += " <li class='dialog-header'>删除图片</li>\n";
+        strHtml += " <li class='dialog-content'> 确认删除？ </li>\n";
+        strHtml += " <li class='dialog-footer'><input class='dialog-footer-queren' type='button' value='确 定' onclick='doOk()'><input class='dialog-footer-queren' type='button' value='取 消' onclick='doCancel()'></li>\n";
+        strHtml += "</ul>\n";
+        alertFram.innerHTML = strHtml;
+        document.body.appendChild(alertFram);
+        document.body.appendChild(shield);
+        this.doOk = function(){
+            alertFram.style.display = "none";
+            shield.style.display = "none";
+            var albumId = document.getElementById("albumId").innerHTML
+            var formData = new FormData();
+            formData.append('id', albumId);
+            $.ajax({
+                type: 'POST',
+                url: "../../albumfile/delete/",
+                data: formData,
+                processData : false,
+                contentType : false,
+                success: function(dataset){
+                    alert(null,dataset.info);
+                },
+                error: function(){
+                    alert(null,dataset.info);
+                }
+            });
+            $('#exampleModal').modal('hide');
+        }
+        this.doCancel = function(){
+            alertFram.style.display = "none";
+            shield.style.display = "none";
+            $(".item").attr('onclick', 'cancelcoverLayer()').bind('click');
+        }
+        alertFram.focus();
+        document.body.onselectstart = function(){return false;};
+    }

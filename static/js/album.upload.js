@@ -381,7 +381,7 @@ var uploadTools = {
         for(var i=0;i<fileList.length;i++){
             var formData = new FormData();
             formData.append('image', fileList[i], fileList[i].name);
-            formData.append('title', timespan);
+            formData.append('id', timespan);
             $.ajax({
                 type: "post",
                 url: "../albumitemlist/create/",
@@ -541,7 +541,7 @@ function getFileName(){
             shtml = '<select name="timespan" id="timespan" style="width:100%;height: 40px;">';
             for(i=0;i<dataset.length;i++)
             {
-                shtml += '<option id="opt" value="' + dataset[i].title + '">' + dataset[i].title + '</option>';
+                shtml += '<option id="opt" value="' + dataset[i].id + '">' + dataset[i].title + '</option>';
             }
             shtml += '</select>'
             document.getElementById("selectFileName").innerHTML = shtml;

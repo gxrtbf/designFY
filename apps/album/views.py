@@ -49,16 +49,16 @@ def searchOwnerTitle_view(request):
 					serializer = AlbumFileSerializer(albumfile, many=True)
 					return Response(serializer.data)
 				else:
-					return JsonResponse({'info': '暂无指定相册'}, status=status.HTTP_204_NO_CONTENT)
+					return JsonResponse({'info': '暂无指定相册'}, status=status.HTTP_200_OK)
 			else:
-				return JsonResponse({'info': '暂无相册'}, status=status.HTTP_204_NO_CONTENT)
+				return JsonResponse({'info': '暂无相册'}, status=status.HTTP_200_OK)
 		else:
 			albumfile = AlbumFile.objects.filter(owner=request.user)
 			if albumfile:
 				serializer = AlbumFileInfoSerializer(albumfile, many=True)
 				return Response(serializer.data)
 			else:
-				return JsonResponse({'info': '暂无相册'}, status=status.HTTP_204_NO_CONTENT)
+				return JsonResponse({'info': '暂无相册'}, status=status.HTTP_200_OK)
 	else:
 		return JsonResponse({'info': '请求方法错误，使用POST'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -88,11 +88,9 @@ def updateOwnerTitle_view(request):
 		title = request.POST.get('title', None)
 		cover = request.FILES.get('cover', None)
 		if ids and (title or cover):
-			albumfile = AlbumFile.objects.filter(id=ids)
-			if title:
-				albumfile.title = title
-			if cover:
-				albumfile.cover = cover
+			albumfile = AlbumFile.objects.get(id=ids)
+			albumfile.title = title
+			albumfile.cover = cover
 			albumfile.save()
 			return JsonResponse({'info': '更新成功'}, status=status.HTTP_200_OK)
 		else:
@@ -107,15 +105,15 @@ def deleteOwnerTitle_view(request):
 	if request.method == 'POST':
 		ids = request.POST.get('id', None)
 		if ids:
-			albumfile = AlbumFile.objects.filter(id=ids)
+			albumfile = AlbumFile.objects.get(id=ids)
 			if albumfile:
-				albums = Album.objects.filter(title=albumfile[0])
+				albums = Album.objects.filter(title=albumfile)
 				if albums:
 					albums.delete()
 				albumfile.delete()
 				return JsonResponse({'info': '删除成功'}, status=status.HTTP_200_OK)
 			else:
-				return JsonResponse({'info': '该相册不存在'}, status=status.HTTP_204_NO_CONTENT)
+				return JsonResponse({'info': '该相册不存在'}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'info': '请求参数错误'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
@@ -135,9 +133,9 @@ def searchAlbumList_view(request):
 					serializer = AlbumSerializer(albums, many=True)
 					return Response(serializer.data)
 				else:
-					return JsonResponse({'info': '暂无照片'}, status=status.HTTP_204_NO_CONTENT)
+					return JsonResponse({'info': '暂无照片'}, status=status.HTTP_200_OK)
 			else:
-				return JsonResponse({'info': '该相册不存在'}, status=status.HTTP_204_NO_CONTENT)
+				return JsonResponse({'info': '该相册不存在'}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'info': '请求参数错误'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
@@ -148,19 +146,19 @@ def searchAlbumList_view(request):
 @api_view(['POST'])
 def createAlbumList_view(request):
 	if request.method == 'POST':
-		title = request.POST.get('title', None)
+		ids = request.POST.get('id', None)
 		image = request.FILES.get('image', None)
 		image.name = str(uuid.uuid1()) + '.png'
-		filepath = settings.MEDIA_ROOT + '/photos/' + title + '/' + image.name
-		if title and image:
-			albumfile = AlbumFile.objects.filter(owner=request.user, title=title)
+		filepath = settings.MEDIA_ROOT + '/photos/' + ids + '/' + image.name
+		if ids and image:
+			albumfile = AlbumFile.objects.filter(owner=request.user, id=ids)
 			if albumfile:
 				albums = Album(title=albumfile[0], image=image)
 				albums.save()
 				reduce_quantile(filepath)
 				return JsonResponse({'info': '上传成功'}, status=status.HTTP_200_OK)
 			else:
-				return JsonResponse({'info': '该相册不存在'}, status=status.HTTP_204_NO_CONTENT)
+				return JsonResponse({'info': '该相册不存在'}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'info': '请求参数错误'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
@@ -178,7 +176,7 @@ def deleteAlbumList_view(request):
 				album.delete()
 				return JsonResponse({'info': '删除成功'}, status=status.HTTP_200_OK)
 			else:
-				return JsonResponse({'info': '该图片不存在'}, status=status.HTTP_204_NO_CONTENT)
+				return JsonResponse({'info': '该图片不存在'}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'info': '请求参数错误'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
