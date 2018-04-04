@@ -58,7 +58,7 @@ $(document).ready(function(){
         }
     });
 	canvasRun();
-	addRecord();
+	addRecord(acId);
 	$('#tupBtn').bind('click',function(){
 		if (clickNum >= 1) {
 			//可抽奖次数减一
@@ -84,7 +84,7 @@ $(document).ready(function(){
 		        async: false,
 		        success: function(dataset){
 		        	setTimeout(function(){
-		        		addRecord()
+		        		addRecord(acId)
 					},6000);
 		        }
 		    });
@@ -310,7 +310,7 @@ function addtext(xstr, num){
 	return temp + xstr
 }
 
-function addRecord(){
+function addRecord(acId){
 	$.ajax({
         type: 'POST',
         url: "../rewardRecord/search/",
