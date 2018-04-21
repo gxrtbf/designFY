@@ -10,4 +10,5 @@ urlpatterns = [
     path('designfy/', include('apps.album.urls')),
     path('designfy/', include('apps.reward.urls')),
     path('designfy/', include('apps.outlook.urls')),
+    path('designfy/', include('apps.note.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

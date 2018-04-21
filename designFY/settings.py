@@ -142,3 +142,4 @@ STATICFILES_DIRS = (
      os.path.join(BASE_DIR, 'static').replace('\\', '/'),
 )
 
+MODEL_ROOT = os.path.join(BASE_DIR,'model').replace("\\","/")

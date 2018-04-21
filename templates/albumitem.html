@@ -15,7 +15,7 @@
         <div class="container-fluid cbody">
             <div class="over"></div>
             <div class="logoImg amplifyImg imagelist" id='imagelist'></div>
-            <div class="footer-fixed" style="background-color: #376956;">
+            <div class="footer-fixed">
                 <div class="col-xs-5" style="height: 100%;"></div>
                 <div class="col-xs-2" style="height: 100%;">
                     <div class="heart" rel="like"></div>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div id='title' style="display: none;">{{ title }}</div>
-            <div id='albumId' style="display: none;"></div>
+
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         <div class="modal-footer" style="float: right;background-color: #fff;width: 100%;">
-                            <button type="button" class="btn btn-danger" onclick="deletealbum()"> 删 除 </button>
+                            <button type="button" class="btn btn-danger" onclick="deleteFileName()"> 删 除 </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal"> 关 闭 </button>
                             <button type="submit" class="btn btn-primary" onclick="updateFileName()"> 修 改 </button>
                         </div>

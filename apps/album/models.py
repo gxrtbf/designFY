@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 def cover_directory_path(instance, filename):
 	# file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-	return 'photos/{0}/{1}'.format('cover', filename)
+	return 'photos/{0}/{1}'.format(instance.title, filename)
 
 class AlbumFile(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -21,7 +21,7 @@ class AlbumFile(models.Model):
 
 def image_directory_path(instance, filename):
 	# file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-	return 'photos/{0}/{1}'.format(instance.title.id, filename)
+	return 'photos/{0}/{1}'.format(instance.title.title, filename)
 
 class Album(models.Model):
 	id = models.AutoField(primary_key=True)

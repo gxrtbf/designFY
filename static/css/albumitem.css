@@ -22,8 +22,8 @@
 	position: fixed;
 }
 .cbody {
-	background: url(../image/albumitem-bg.jpg);
-	background-repeat: repeat;
+	background: url(../image/trianglify.png);
+	background-repeat: no-repeat;
 	min-height: 736px;
 }
 .imagelist {
