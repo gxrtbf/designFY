@@ -27,7 +27,7 @@ def compareface_view(request):
 			path2 = settings.MEDIA_ROOT+'/base.png'
 			score = compare.compareScore(path1, path2)
 			print(score)
-			return JsonResponse({'info': score}, status=200)
+			return JsonResponse({'info': int(score[0][0]*100)}, status=200)
 		else:
 			return JsonResponse({'info': 'file none'}, status=200)
 	else:

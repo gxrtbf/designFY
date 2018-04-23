@@ -1,5 +1,6 @@
 $(function(){
-	var num = 0
+	var num = 0;
+    var noface = false;
 	var video = document.getElementById('video');
     var canvas = document.getElementById('canvas');
     var canvas_temp = document.getElementById('canvas-temp');
@@ -11,19 +12,19 @@ $(function(){
     tracker.setStepSize(2);
     tracker.setEdgesDensity(0.1);
 
-    tracking.track('#video', tracker, { camera: true });
+    var trackTask = tracking.track('#video', tracker, { camera: true });
     tracker.on('track', function(event) {
         context.clearRect(0, 0, canvas.width, canvas.height);
         event.data.forEach(function(rect) {
-        	num = num + 1
             context.strokeStyle = '#F5A433';
             context.lineWidth = 2;
             context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-            if(num==1){
-                temp.drawImage(video, 0, 0, canvas.width, canvas.height)
-            	dealImg(rect.x-50, rect.y-50, 200, 200)
+            num += 1
+            if(num%20 == 1){
+                temp.drawImage(video, 0, 0, canvas.width, canvas.height);
+                dealImg(rect.x, rect.y, 100, 100);
             }
-        });
+        });     
     });
 })
 
@@ -46,16 +47,22 @@ function submitImg(){
     var canvas_submit = document.getElementById('canvas-submit');
     canvas_submit.toBlob(function(blob){
         var formData = new FormData();
-        formData.append('face', blob, 'test.jpg');
+        formData.append('face', blob, 'test.png');
         $.ajax({
             type: 'POST',
             url: "../note/compareface/",
             data: formData,
             processData : false,
             contentType : false,
+            async: false,
             success: function(dataset){
+                console.log(dataset.info)
+                if(dataset.info <= 35){
+                    window.location.href = "../index/";
+                }
             },
             error: function(){
+                alert('请求错误！')
             }
         })
     })

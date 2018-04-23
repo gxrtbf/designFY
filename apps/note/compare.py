@@ -4,6 +4,9 @@ from PIL import Image
 from django.conf import settings
 import numpy as np
 
+import os  
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+
 def contrastive_loss(y_true, y_pred):
 	margin = 1.
 	return K.mean((1. - y_true) * K.square(y_pred) + y_true * K.square(K.maximum(margin - y_pred, 0.)))
@@ -24,9 +27,8 @@ def loadImg(depth_file1, depth_file2):
 
 def compareScore(depth_file1, depth_file2):
 	cop = loadImg(depth_file1, depth_file2)
-	score = MODEL.predict([cop[0].reshape((1,200,200,3)), cop[1].reshape((1,200,200,3))])
+	score = MODEL.predict([cop[0].reshape((1,100,100,3)), cop[1].reshape((1,100,100,3))])
 	return score
 
-MODEL = load_model('E:/env/designFY/model/model_faceId_test.h5', {'contrastive_loss':contrastive_loss})
-score = compareScore('E:/env/designFY/media/base.png', 'E:/env/designFY/media/temp.png')
-print(score)
+MODEL = load_model(settings.MODEL_ROOT + '/model_faceId_new.h5', {'contrastive_loss':contrastive_loss})
+score = compareScore(settings.MEDIA_ROOT + '/base.png', settings.MEDIA_ROOT + '/temp.png')
