@@ -31,3 +31,23 @@ def login_view(request):
         	return render(request,'login.html',{'sign': '输入无效！'})
     else:
     	pass
+
+def loginImg_view(request):
+
+    if request.method == 'GET':
+        return render(request,'loginImg.html')
+    elif request.method == 'POST':
+        uf = UserForm(request.POST)
+        if uf.is_valid():
+            username = uf.cleaned_data['username']
+            password = uf.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None and user.is_active:
+                login(request,user)
+                return HttpResponseRedirect("/designfy/index/")
+            else:
+                return render(request,'login.html',{'sign': '账号或密码输入错误！'})  
+        else:
+            return render(request,'login.html',{'sign': '输入无效！'})
+    else:
+        pass

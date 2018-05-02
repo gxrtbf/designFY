@@ -18,16 +18,21 @@ def note_view(request):
 @api_view(['POST'])
 def compareface_view(request):
 	if request.method == 'POST':
-		outlook = request.FILES.get('face', None)
-		print(outlook)
+		outlook = request.FILES.getlist('file[]')
 		if outlook:
-			img = Image.open(outlook)
-			path1 = settings.MEDIA_ROOT+'/temp.png'
-			img.save(path1)
-			path2 = settings.MEDIA_ROOT+'/base.png'
-			score = compare.compareScore(path1, path2)
-			print(score)
-			return JsonResponse({'info': int(score[0][0]*100)}, status=200)
+			basepath = settings.MEDIA_ROOT+'/base.png'
+			basescore = compare.score(basepath)
+			scorelist = []
+			for item in outlook:
+				img = Image.open(item)
+				path = settings.MEDIA_ROOT+'/temp.png'
+				img.save(path)
+				comscore = compare.score(path)
+				score = compare.compareScore(basescore, comscore)
+				scorelist.append(int(score*100))
+			print(scorelist)
+			finalscore = int(sum(scorelist)/len(scorelist))
+			return JsonResponse({'info': finalscore}, status=200)
 		else:
 			return JsonResponse({'info': 'file none'}, status=200)
 	else:
